@@ -15,7 +15,7 @@ Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
 
 const char* ssid = "IOTTEST";
 const char* pass = "pendrive";
-const char* server = "http://192.168.1.33/TEST/fingerprint_store.php";
+const char* server = "http://192.168.21.96:5000";
 String postData;
 
 int FingerID = 0;       
@@ -517,37 +517,60 @@ void loop() {
   FingerID = getFingerprintID();  
   delay(50);  
   DisplayFingerprintID();
-  if (checkStat == 1){
+  int status1 = checkADDorDel();
+  Serial.print(status1);
+  if (status1 == 1){
+    delay(5000);
     CheckToADD();
     ChecktoDeleteID();
   }
   else{
-    delay(5000);
+    delay(3000);
   }
   
 }
 
-void checkADDorDel(){
+uint8_t checkADDorDel() {
   WiFiClient client;
   HTTPClient http;
 
-  postData = "Check_ADD_OR_DEL";
+  String postData = "Check_ADD_OR_DEL";  // Data to send
+  String fullServer = String(server) + "/esp32";
 
-  http.begin(client, server);
+  Serial.println("Starting HTTP request...");
+  Serial.print("Sending to: ");
+  Serial.println(fullServer);
+  Serial.print("Post Data: ");
+  Serial.println(postData);
+
+  http.begin(client, fullServer);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
-  int httpCode = http.POST(postData);
-  String payload = http.getString();
+  int httpCode = http.POST(postData);  // Send data to Flask server
+  String payload = http.getString();   // Get response from Flask
 
-  Serial.print(payload);
-  int payloadINT = payload.toInt();
+  Serial.print("HTTP Response Code: ");
+  Serial.println(httpCode);
+  Serial.print("Response from Server: ");
+  Serial.println(payload);
+
   if (payload.substring(0, 6) == "status") {
     String stat = payload.substring(6);
     Serial.println(stat);
     checkStat = stat.toInt();
+    Serial.println(checkStat);
   }
+
+  if(checkStat == 1){
+    return 1;
+  }
+  else{
+    return 0;
+  }
+
   http.end();
 }
+
 
 
 // **************************<GET Stored Fingerprint ID>*******************
@@ -641,6 +664,7 @@ int getFingerprintID() {
 
 // *********************<SEND Request and Recive Response>********************
 void CheckToADD(){
+
   WiFiClient client;
   HTTPClient http;
 
@@ -661,8 +685,6 @@ void CheckToADD(){
 
   http.end();
 }
-
-
 
 
 // ********************<FINGERPRINT ENROLL>******************
