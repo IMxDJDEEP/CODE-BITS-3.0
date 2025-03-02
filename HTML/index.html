@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Entry Exit Servillance System</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        table { width: 80%; margin: auto; border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 10px; text-align: center; }
+        th { background-color: #4CAF50; color: white; }
+        button { padding: 10px; margin: 10px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Hostel Entry Exit Servillance System</h1>
+    <div class="navbar">
+        <a href="{{ url_for('index') }}">HOME</a>
+        <a href="{{ url_for('addordel') }}">ADD or Delete Fingerprint</a>
+    </div>    
+
+    <table id="logtable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Gender</th>
+                <th>Hostel Name</th>
+                <th>Department</th>
+                <th>Room No</th>
+                <th>Mobile Number</th>
+                <th>Purpose</th>
+                <th>Out Time</th>
+                <th>In Time</th>
+            </tr>
+        </thead>
+    </table>
+    
+</body>
+</html>
