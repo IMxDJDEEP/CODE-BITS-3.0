@@ -3,7 +3,8 @@ import mysql.connector
 from db_setup import create_db, create_tb
 from connectdb import connDB
 from checkStat import set_status,get_status,set_fingerprint_id,get_fingerprint_id,set_confirm_id,get_confirm_id,add_user_or_not,get_stored_id
-from operationdb import add_user_to_db
+from operationdb import add_user_to_db,remove_user_from_db
+from checkStat import set_del_id,get_del_id, get_confDel_id
 
 app = Flask(__name__, template_folder="HTML")
 
@@ -14,6 +15,7 @@ create_tb()
 # Database connection
 conn = connDB()
 
+global delstat
 # Mainpage
 @app.route('/')
 def index():
@@ -86,28 +88,50 @@ def get_confirm_id_from_esp32():
     else:
         return "Invalid Data", 400
     
+@app.route('/esp32/delfinger', methods=['POST'])
+def get_delete_id_from_esp32():
+    data = request.get_data(as_text=True).strip()
+    global delstat
+    print(f"Received Raw Data from ESP32: '{data}'")  
+
+    if data == "DeleteID=check":
+        if delstat == True:
+            delID = get_stored_id()
+            set_del_id(delID)
+            response = get_del_id()
+            print(f"Sending Response: {response}")
+            delstat = False
+            return response
+            
+               
+    else:
+        return "Invalid Data",400
+     
+    
 @app.route('/confirm_add', methods=['POST'])
 def confirm_add():
-    confirm_id = request.form.get('confirm_id')  # Get ID from the form properly
     action = request.form.get('action')  # Get action (add, update, remove)
     
-    print(f"Received Confirm ID: {confirm_id}")
     print(f"Action: {action}")
 
     # User details
     name = request.form.get('name')
+    print(name)
     gender = request.form.get('gender')
+    print(gender)
     number = request.form.get('number')
+    print(number)
     hostel = request.form.get('Hostel')
+    print(hostel)
     department = request.form.get('Department')
+    print(department)
     room = request.form.get('Room')
+    print(room)
 
-    # Validate confirm_id
-    if not confirm_id or not confirm_id.isdigit():
-        return render_template('addordel.html', message="Error: Invalid Fingerprint ID")
 
-    confirm_id = int(confirm_id)  # Convert to integer
+
     finger_id = get_confirm_id()  # Retrieve the stored ID
+    print("Fingerprint ID:",finger_id)
     if add_user_or_not() == True:
         if action == "add":
             # Ensure all fields are filled before adding a user
@@ -117,15 +141,18 @@ def confirm_add():
             success, msg = add_user_to_db(finger_id, name, gender, number, hostel, department, room)
             return render_template('addordel.html', message=msg)
 
+        elif action == "remove":
+            global delstat
+            delstat = True
+            # Remove logic (modify this function in `operationdb.py`)
+            success, msg = remove_user_from_db(finger_id)
+            return render_template('addordel.html', message=msg)
     """elif action == "update":
         # Update logic (modify this function in `operationdb.py`)
         success, msg = update_user_in_db(finger_id, name, gender, number, hostel, department, room)
-        return render_template('addordel.html', message=msg)
-
-    elif action == "remove":
-        # Remove logic (modify this function in `operationdb.py`)
-        success, msg = remove_user_from_db(finger_id)
         return render_template('addordel.html', message=msg)"""
+
+            
 
     return render_template('addordel.html', message="Error: Invalid Action")
 

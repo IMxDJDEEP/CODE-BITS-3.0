@@ -17,12 +17,17 @@ def get_status():
 fingerprint_id = None
 stored_id = None
 confirm_id = None
+del_id = None
+
+confirmDel_id = None
 
 def set_fingerprint_id(f_id):
     global fingerprint_id
     global stored_id
+    global confirmDel_id
     fingerprint_id = f_id
     stored_id = f_id
+    confirmDel_id = f_id
     print(f"Fingerprint id stored {fingerprint_id}")
 
 def set_confirm_id(f_id):
@@ -57,3 +62,22 @@ def get_fingerprint_id():
 def get_stored_id():
     global stored_id
     return stored_id
+
+def set_del_id(del_id1):
+    global del_id
+    del_id = del_id1
+    print("Delete ID:",del_id)
+    
+def get_del_id():
+    global del_id
+    if del_id:
+        response = f"del-id{del_id}"
+        del_id = None
+    else:
+        response = "error"
+
+    return response
+
+def get_confDel_id():
+    global confirmDel_id
+    return confirmDel_id

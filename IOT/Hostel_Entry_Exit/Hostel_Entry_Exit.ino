@@ -946,7 +946,7 @@ uint8_t getFingerprintEnroll(){
     display.setTextSize(2);
     display.setCursor(0, 0);
     display.print("Finger");
-    display.setCursor(0, 10);
+    display.setCursor(0, 20);
     display.print("Stored");
     display.display();
     delay(3000);
@@ -1006,7 +1006,9 @@ void ChecktoDeleteID(){
 
   postData = "DeleteID=check";
 
-  http.begin(client, server);
+  String fullServer = String(server) + "/esp32/delfinger";
+
+  http.begin(client, fullServer);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
   int httpCode = http.POST(postData);
@@ -1014,6 +1016,7 @@ void ChecktoDeleteID(){
 
   if (payload.substring(0, 6) == "del-id") {
     String del_id = payload.substring(6);
+    Serial.print("Deleted id: ");
     Serial.println(del_id);
     deleteFingerprint( del_id.toInt() );
   }
@@ -1026,9 +1029,26 @@ uint8_t deleteFingerprint(int id) {
   uint8_t p = -1;
 
   p = finger.deleteModel(id);
+  display.clearDisplay();
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 0);
+  display.print(F("Deleting \n"));
+  display.setCursor(0, 20);
+  display.print(F("Fingerprint...\n"));
+  display.display();
+  delay(2000);
 
   if (p == FINGERPRINT_OK) {
     Serial.println("Deleted!");
+    display.clearDisplay();
+    display.setTextSize(2);
+    display.setTextColor(WHITE);
+    display.setCursor(0, 0);
+    display.print(F("Delete \n"));
+    display.setCursor(0, 20);
+    display.print(F("Fingerprint!\n"));
+    display.display();
   } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
     Serial.println("Communication error");
   } else if (p == FINGERPRINT_BADLOCATION) {
