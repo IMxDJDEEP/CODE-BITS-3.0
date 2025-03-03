@@ -30,13 +30,16 @@
                 {% endif %}
             </fieldset>
         </form>
-        <form action="">
+        <form action="/confirm_add" method="post">
             <fieldset>
                 <legend><span class="number">2</span> User Info</legend>
+                <input type="hidden" name="action" id="action" value="">  <!-- Hidden action field -->
+                
                 <input type="text" name="name" id="name" placeholder="User Name...">
-                <input type="radio" name="gender" class="gender" value="Female">Female
-	          	<input type="radio" name="gender" class="gender" value="Male" checked="checked">Male
+                <input type="radio" name="gender" value="Female"> Female
+                <input type="radio" name="gender" value="Male" checked> Male
                 <input type="text" name="number" id="number" placeholder="Mobile Number...">
+                
                 <label for="Hostel">Select Hostel:</label>
                 <select name="Hostel" id="Hostel" required>
                     <option value="">-- Select Hostel --</option>
@@ -44,6 +47,7 @@
                     <option value="Raigad">Raigad</option>
                     <option value="Ajinkyatara">Ajinkyatara</option>
                 </select>
+                
                 <label for="Department">Select Department:</label>
                 <select name="Department" id="Department" required>
                     <option value="">-- Select Department --</option>
@@ -54,13 +58,21 @@
                     <option value="MECH">MECH</option>
                     <option value="CIVIL">CIVIL</option>
                 </select>
+                
                 <input type="text" name="Room" id="Room" placeholder="Room Number...">
             </fieldset>
-            <button type="button" name="user_add" class="user_add">Add User</button>
-			<button type="button" name="user_upd" class="user_upd">Update User</button>
-			<button type="button" name="user_rmo" class="user_rmo">Remove User</button>
+        
+            <button type="submit" class="user_add" onclick="setAction('add')">Add User</button>
+            <button type="submit" class="user_upd" onclick="setAction('update')">Update User</button>
+            <button type="submit" class="user_rmo" onclick="setAction('remove')">Remove User</button>
         </form>
-    </div>
+        
+        <script>
+            function setAction(actionType) {
+                document.getElementById("action").value = actionType;
+            }
+        </script>
+        
 
     <script>
         document.querySelector(".user_add").addEventListener("click", function () {
