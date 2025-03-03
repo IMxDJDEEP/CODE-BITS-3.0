@@ -520,7 +520,6 @@ void loop() {
   int status1 = checkADDorDel();
   Serial.print(status1);
   if (status1 == 1){
-    delay(5000);
     CheckToADD();
     ChecktoDeleteID();
   }
@@ -670,7 +669,9 @@ void CheckToADD(){
 
   postData = "Get_Fingerid=get_id";
 
-  http.begin(client, server);
+  String fullServer = String(server) + "/esp32/get_fingerid";
+
+  http.begin(client, fullServer);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
   int httpCode = http.POST(postData);
@@ -678,6 +679,7 @@ void CheckToADD(){
 
   if (payload.substring(0, 6) == "add-id") {
     String add_id = payload.substring(6);
+    Serial.print("add-id :");
     Serial.println(add_id);
     id = add_id.toInt();
     getFingerprintEnroll();

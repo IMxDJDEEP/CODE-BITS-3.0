@@ -19,13 +19,18 @@
         <a href="{{ url_for('addordel') }}">ADD or Delete Fingerprint</a>
     </div>
     <div>
-        <form action="">
+        <form action="/set_user" method="post">
             <fieldset>
                 <legend><span class="number">1</span>User Fingerprint ID:</legend>
                 <label>Enter Fingerprint ID</label>
                 <input type="number" name="fingerid" id="fingerid" placeholder="User Fingerprint ID...">
-                <button type="button" name="fingerid_add" class="fingerid_add">Add Fingerprint ID</button>
+                <button type="submit" name="fingerid_add" class="fingerid_add">Add Fingerprint ID</button>
+                {% if message %}
+                <p style="color: green; font-weight: bold;">{{ message }}</p>
+                {% endif %}
             </fieldset>
+        </form>
+        <form action="">
             <fieldset>
                 <legend><span class="number">2</span> User Info</legend>
                 <input type="text" name="name" id="name" placeholder="User Name...">
@@ -57,6 +62,16 @@
         </form>
     </div>
 
-    
+    <script>
+        document.querySelector(".user_add").addEventListener("click", function () {
+            let name = document.getElementById("name").value;
+            let number = document.getElementById("number").value;
+             if (!name || !number) {
+                alert("Please fill in all required fields.");
+                return;
+            }
+            document.querySelector("form[action='/add_user']").submit();
+            });
+    </script>
 </body>
 </html>
