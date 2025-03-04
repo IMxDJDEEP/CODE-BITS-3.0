@@ -51,6 +51,15 @@ def create_tb():
         )
     """)
 
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS admin_finger (
+        log_id INT AUTO_INCREMENT PRIMARY KEY,
+        fingerid INT,
+        name VARCHAR(255),
+        number VARCHAR(20)
+        )
+    """)
+
     conn.commit()
     print("Tables created successfully.")
     cursor.close()

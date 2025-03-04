@@ -592,6 +592,15 @@ void loop() {
     CheckToADD();
     ChecktoDeleteID();
   }
+  else if (status1 == 2){
+    FingerID = getFingerprintID();  
+    delay(50);  
+    DisplayFingerprintID();
+  }
+  else if (status1 == 3){
+    CheckToADD();
+    ChecktoDeleteID();
+  }
   else{
     delay(3000);
   }
@@ -631,6 +640,12 @@ uint8_t checkADDorDel() {
 
   if(checkStat == 1){
     return 1;
+  }
+  else if (checkStat == 2){
+    return 2;
+  }
+  else if (checkStat == 3){
+    return 3;
   }
   else{
     return 0;
@@ -717,6 +732,7 @@ int getFingerprintID() {
   }   
   // found a match!
   Serial.print("Found ID #"); Serial.print(finger.fingerID); 
+  int fingeridRec = finger.fingerID;
   Serial.print(" with confidence of "); Serial.println(finger.confidence);
   display.clearDisplay();
   display.setTextSize(2);
@@ -725,6 +741,9 @@ int getFingerprintID() {
   display.print(F("Match\n"));
   display.setCursor(0, 20);
   display.print(F("Found!\n"));
+  display.setCursor(0, 30);
+  display.print(F("ID = "));
+  display.print(fingeridRec);
   display.display();
   delay(2000); 
 
@@ -1047,7 +1066,9 @@ uint8_t deleteFingerprint(int id) {
     display.setCursor(0, 0);
     display.print(F("Delete \n"));
     display.setCursor(0, 20);
-    display.print(F("Fingerprint!\n"));
+    display.print(F("Finger\n"));
+    display.setCursor(0, 30);
+    display.print(F("Print!\n"));
     display.display();
   } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
     Serial.println("Communication error");

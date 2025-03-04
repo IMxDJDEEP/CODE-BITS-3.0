@@ -18,7 +18,7 @@ fingerprint_id = None
 stored_id = None
 confirm_id = None
 del_id = None
-
+global delstat
 confirmDel_id = None
 
 def set_fingerprint_id(f_id):
@@ -41,12 +41,13 @@ def get_confirm_id():
     return confirm_id
 
 def add_user_or_not():
-    global stored_id
-    global confirm_id
-    if stored_id == confirm_id:
-        return True
-    else:
-        return False
+    global stored_id, confirm_id  # Declare both variables as global
+
+    if stored_id is None or confirm_id is None:
+        print("Error: stored_id or confirm_id is not set")
+        return False  # Return False if values are not initialized
+
+    return stored_id == confirm_id  # Directly return the comparison result
 
 def get_fingerprint_id():
     global fingerprint_id

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registation</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        table { width: 80%; margin: auto; border-collapse: collapse; }
+        th, td { border: 1px solid black; padding: 10px; text-align: center; }
+        th { background-color: #4CAF50; color: white; }
+        button { padding: 10px; margin: 10px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Admin Registation</h1>
+    <div class="navbar">
+        <a href="{{ url_for('home') }}">HOME</a>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('addordel') }}">ADD or Delete Fingerprint</a>
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('register') }}">Register</a>
+    </div> 
+
+    <div>
+        <form action="/set_admin" method="post">
+            <fieldset>
+                <legend><span class="number">1</span>Admin Fingerprint ID:</legend>
+                <label>Enter Fingerprint ID</label>
+                <input type="number" name="fingerid" id="fingerid" placeholder="Admin Fingerprint ID...">
+                <button type="submit" name="fingerid_add" class="fingerid_add">Add Fingerprint ID</button>
+                {% if message %}
+                <p style="color: green; font-weight: bold;">{{ message }}</p>
+                {% endif %}
+            </fieldset>
+        </form>
+        <form action="/confirm_add_admin" method="post">
+            <fieldset>
+                <legend><span class="number">2</span> Admin Info</legend>
+                <input type="hidden" name="action" id="action" value="add">  <!-- Hidden action field -->
+                
+                <input type="text" name="name" id="name" placeholder="Admin Name...">
+                <input type="text" name="number" id="number" placeholder="Mobile Number...">
+            
+            </fieldset>
+        
+            <button type="submit" class="admin_add" onclick="setAction('add')">Add Admin</button>
+            <button type="submit" class="admin_upd" onclick="setAction('update')">Update Admin</button>
+            <button type="submit" class="admin_rmo" onclick="setAction('remove')">Remove Admin</button>
+
+        </form>
+    </div>
+    
+    <script>
+        function setAction(actionValue) {
+            document.getElementById("action").value = actionValue;
+        }
+    </script>
+    
+</body>
+</html>
