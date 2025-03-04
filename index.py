@@ -17,9 +17,10 @@ conn = connDB()
 
 global delstat
 @app.route('/')
-def home_page():
+def home():
     set_status(0)
     return render_template('home.html')
+
 # Dashboard
 @app.route('/Dashboard')
 def dashboard():
