@@ -16,9 +16,13 @@ create_tb()
 conn = connDB()
 
 global delstat
-# Mainpage
 @app.route('/')
-def index():
+def home_page():
+    set_status(0)
+    return render_template('home.html')
+# Dashboard
+@app.route('/Dashboard')
+def dashboard():
     set_status(0)
     return render_template('index.html')
 
