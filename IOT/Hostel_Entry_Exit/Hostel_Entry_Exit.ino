@@ -741,7 +741,7 @@ int getFingerprintID() {
   display.print(F("Match\n"));
   display.setCursor(0, 20);
   display.print(F("Found!\n"));
-  display.setCursor(0, 30);
+  display.setCursor(0, 40);
   display.print(F("ID = "));
   display.print(fingeridRec);
   display.display();
@@ -1067,7 +1067,7 @@ uint8_t deleteFingerprint(int id) {
     display.print(F("Delete \n"));
     display.setCursor(0, 20);
     display.print(F("Finger\n"));
-    display.setCursor(0, 30);
+    display.setCursor(0, 40);
     display.print(F("Print!\n"));
     display.display();
   } else if (p == FINGERPRINT_PACKETRECIEVEERR) {
@@ -1101,6 +1101,7 @@ void DisplayFingerprintID(){
     display.clearDisplay();
     display.drawBitmap(34 , 0, FinPr_start_bits, FinPr_start_width, FinPr_start_height, WHITE);
     display.display();
+    return;
   }
   else if(FingerID == -1){
     Serial.println("Error At get Fingerprint");
@@ -1122,7 +1123,10 @@ void SendFingerprintID(int finger){
   HTTPClient http;
 
   postData = "FingerID=" + String(finger); 
-  http.begin(client,server); 
+
+  String fullServer = String(server) + "/esp32/fingerprint";
+
+  http.begin(client,fullServer); 
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
   int httpCode = http.POST(postData);
@@ -1136,11 +1140,27 @@ void SendFingerprintID(int finger){
   if (payload.substring(0, 5) == "entry") {
     String user_name = payload.substring(5);
     Serial.print(user_name);
+    display.clearDisplay();
+    display.setTextSize(2);
+    display.setTextColor(WHITE);
+    display.setCursor(0, 0);
+    display.print(F("Welcome"));
+    display.setCursor(0, 20);
+    display.print(user_name);
+    display.display();
   }
 
-  else if (payload.substring(0, 6) == "exit") {
-    String user_name = payload.substring(6);
+  else if (payload.substring(0, 4) == "exit") {
+    String user_name = payload.substring(4);
     Serial.println(user_name);
+    display.clearDisplay();
+    display.setTextSize(2);
+    display.setTextColor(WHITE);
+    display.setCursor(0, 0);
+    display.print(F("Good Bye"));
+    display.setCursor(0, 20);
+    display.print(user_name);
+    display.display();
   } 
 
   postData = "";

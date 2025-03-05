@@ -1,10 +1,11 @@
 from flask import Flask, request, jsonify, render_template
 import mysql.connector
-from db_setup import create_db, create_tb
+from db_setup import create_db, create_tb, drop_db
 from connectdb import connDB
-from checkStat import set_status,get_status,set_fingerprint_id,get_fingerprint_id,set_confirm_id,get_confirm_id,add_user_or_not,get_stored_id
-from operationdb import add_user_to_db,remove_user_from_db,add_admin_to_db,remove_admin_from_db
-from checkStat import set_del_id,get_del_id, get_confDel_id
+from checkStat import set_status, get_status, set_fingerprint_id, get_fingerprint_id, set_confirm_id, get_confirm_id
+from operationdb import add_user_to_db, remove_user_from_db, add_admin_to_db, remove_admin_from_db
+from checkStat import set_del_id,get_del_id, get_confDel_id, add_user_or_not, get_stored_id
+from operationdb import get_user_name, get_last_log, update_entry_log, insert_exit_log
 
 app = Flask(__name__, template_folder="HTML")
 
@@ -43,7 +44,30 @@ def register():
     set_status(3)
     return render_template('register.html')
 
-
+@app.route('/esp32/fingerprint', methods=['POST'])
+def handle_fingerprint():
+    finger_id = request.form.get('FingerID')
+    if not finger_id:
+        return "Invalid Request", 400
+    
+    try:
+        finger_id = int(finger_id)
+    except ValueError:
+        return "Invalid Finger ID", 400
+    
+    user_name = get_user_name(finger_id)
+    if not user_name:
+        return "unknown", 404
+    
+    last_log = get_last_log(finger_id)
+    if last_log and last_log["out_time"] and not last_log["in_time"]:
+        update_entry_log(last_log["log_id"])
+        action = "entry"
+    else:
+        insert_exit_log(finger_id, user_name)
+        action = "exit"
+    
+    return f"{action} {user_name}"
 
 # Status Check Add Page or Home Page
 @app.route('/esp32', methods=['POST'])

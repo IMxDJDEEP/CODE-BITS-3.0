@@ -18,6 +18,21 @@ def create_db():
     cursor.close()
     conn.close()
 
+def drop_db():
+    conn = mysql.connector.connect(
+        host = "localhost",
+        user = "root",
+        password = "Hacktivate",
+        database = "Hostel"
+        )
+    cursor = conn.cursor()
+    cursor.execute("DROP TABLE IF EXISTS entry_exit_log")
+
+    conn.commit()
+    print("Tables drop successfully.")
+    cursor.close()
+    conn.close()
+
 def create_tb():
     conn = mysql.connector.connect(
         host = "localhost",
@@ -44,6 +59,7 @@ def create_tb():
         CREATE TABLE IF NOT EXISTS entry_exit_log (
         log_id INT AUTO_INCREMENT PRIMARY KEY,
         fingerid INT,
+        user_name varchar(255),
         purpose VARCHAR(255),
         out_time DATETIME,
         in_time DATETIME,
