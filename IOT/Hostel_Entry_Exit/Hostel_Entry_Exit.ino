@@ -14,8 +14,8 @@ HardwareSerial mySerial(1);  // Use UART1 on ESP32 (RX=16, TX=17)
 Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
 
 const char* ssid = "IOTTEST";
-const char* pass = "pendrive";
-const char* server = "http://192.168.11.53:5000";
+const char* pass = "pendrive1";
+const char* server = "http://192.168.21.96:5000";
 String postData;
 
 int FingerID = 0;       
