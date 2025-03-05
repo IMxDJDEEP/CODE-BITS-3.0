@@ -21,6 +21,16 @@
         <a href="{{ url_for('login') }}">Login</a>
         <a href="{{ url_for('register') }}">Register</a>
     </div> 
-    
+    <form action="/set_admin_login" method="post">
+        <fieldset>
+            <legend><span class="number">1</span>User Fingerprint ID:</legend>
+            <label>Enter Fingerprint ID</label>
+            <input type="number" name="fingerid" id="fingerid" placeholder="Admin Fingerprint ID...">
+            <button type="submit" name="fingerid_add" class="fingerid_add">Login</button>
+            {% if message %}
+            <p style="color: green; font-weight: bold;">{{ message }}</p>
+            {% endif %}
+        </fieldset>
+    </form>
 </body>
 </html>

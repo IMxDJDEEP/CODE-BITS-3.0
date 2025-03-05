@@ -6,6 +6,7 @@ from checkStat import set_status, get_status, set_fingerprint_id, get_fingerprin
 from operationdb import add_user_to_db, remove_user_from_db, add_admin_to_db, remove_admin_from_db
 from checkStat import set_del_id,get_del_id, get_confDel_id, add_user_or_not, get_stored_id
 from operationdb import get_user_name, get_last_log, update_entry_log, insert_exit_log
+from operationdb import get_admin_name, get_admin_last_log, insert_entry_log, update_exit_log
 
 app = Flask(__name__, template_folder="HTML")
 
@@ -58,6 +59,10 @@ def handle_fingerprint():
     user_name = get_user_name(finger_id)
     if not user_name:
         return "unknown", 404
+
+    admin_name = get_admin_name(finger_id)
+    if not user_name:
+        return "unknown", 404
     
     last_log = get_last_log(finger_id)
     if last_log and last_log["out_time"] and not last_log["in_time"]:
@@ -65,6 +70,14 @@ def handle_fingerprint():
         action = "entry"
     else:
         insert_exit_log(finger_id, user_name)
+        action = "exit"
+    
+    last_admin_log = get_admin_last_log(finger_id)
+    if last_admin_log and last_admin_log["in_time"] and not last_admin_log["out_time"]:
+        update_exit_log(last_admin_log["log_id"])
+        action = "entry"
+    else:
+        insert_entry_log(finger_id, admin_name)
         action = "exit"
     
     return f"{action} {user_name}"
@@ -99,6 +112,19 @@ def set_fingerid():
 
     set_fingerprint_id(int(fingerid))  # Store the fingerprint ID
     return render_template('addordel.html', message="Fingerprint ID Stored Successfully")
+
+@app.route('/set_admin_login', methods=['POST'])
+def set_fingerid_Admin():
+    """Receive fingerprint ID from the web form."""
+    fingerid = request.form.get('fingerid')  # Get Fingerprint ID
+    buttres = request.form.get('fingerid_add')  # Get Button Response
+    print(fingerid)
+    print(buttres)
+    if not fingerid or not fingerid.isdigit():
+        return render_template('login.html', message="Error: Invalid or missing Fingerprint ID")
+
+    set_fingerprint_id(int(fingerid))  # Store the fingerprint ID
+    return render_template('HOME.html', message="Fingerprint ID Stored Successfully")
 
 @app.route('/set_admin', methods=['POST'])
 def set_admin_fingerid():

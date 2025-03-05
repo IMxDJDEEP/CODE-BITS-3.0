@@ -126,3 +126,48 @@ def update_entry_log(log_id):
     conn.commit()
     cursor.close()
     conn.close()
+
+
+# Fetch Admin name by Finger ID
+def get_admin_name(finger_id):
+    conn = connDB()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT name FROM admin_finger WHERE fingerid = %s", (finger_id,))
+    user = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return user['name'] if user else None
+
+# Fetch last log entry
+def get_admin_last_log(finger_id):
+    conn = connDB()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute(
+        "SELECT log_id, in_time, out_time FROM admin_log WHERE fingeridA = %s ORDER BY log_id DESC LIMIT 1",
+        (finger_id,)
+    )
+    last_log = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return last_log
+
+def insert_entry_log(finger_id, admin_name):
+    conn = connDB()
+    cursor = conn.cursor()
+    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    cursor.execute(
+        "INSERT INTO admin_log (fingeridA, in_time, user_name) VALUES (%s, %s, %s)",
+        (finger_id, current_time, admin_name)
+    )
+    conn.commit()
+    cursor.close()
+
+# Update entry log
+def update_exit_log(log_id):
+    conn = connDB()
+    cursor = conn.cursor()
+    current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    cursor.execute("UPDATE admin_log SET out_time = %s WHERE log_id = %s", (current_time, log_id))
+    conn.commit()
+    cursor.close()
+    conn.close()
